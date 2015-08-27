@@ -1,0 +1,30 @@
+extends layout
+
+block links
+	link(rel='stylesheet', href='/stylesheets/forms.css')
+
+block content
+	h1 Signup
+	if error
+		+alert("danger")=error
+	form#loginform( name="loginform", method="POST", action="/user/signup" )
+		table#signupForm
+			tr
+				td Username
+				td
+					input#username( type="text", name="username", value="" )
+			tr 
+				td Password 
+				td
+					input#password( type="password", name="password" )
+			tr
+				td Password Confirm
+				td
+					input#password( type="password", name="passwordConfirm" )
+			tr
+				td Email
+				td
+					input#email( type="email", name="email" )
+			tr
+				td
+					input#submit( type="submit", value="login" )

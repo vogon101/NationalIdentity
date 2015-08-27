@@ -1,0 +1,26 @@
+doctype html
+html
+	head
+		title NationalIdentity
+		meta( charset='utf-8' )
+		meta( http-equiv='X-UA-Compatible', content='IE=edge' )
+		meta( name='viewport', content='width=device-width, initial-scale=1.0' )
+		//- Bootswatch Theme
+		script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
+		script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
+		include mixins
+
+		+bootswatch("superhero")
+
+		block links
+	body()
+		+nav("NationalIdentity", "mainNav", "inverse", "/app/")
+			+nav_item( "/app/" ) Home
+			if user
+				+nav_item( "/user/logout" ) Logout
+				+nav_item( "/user/" )=user.username
+			else
+				+nav_item( "/user/login" ) Login
+				+nav_item( "/user/signup" ) SignUp
+		.container
+			block content

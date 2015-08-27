@@ -5,14 +5,33 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var session = require('express-session');
+var crypto = require('crypto');
+
+var routes_front = require('./routes/front');
+var routes_back = require('./routes/back');
+
+//Connect to the DataBase
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/NationalIdentity');
+
+var AM = require('./helpers/account-manager/AM')
+var AM = new AM(db, crypto);
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+//==MIDLEWARE==//
+//Log ips
+app.use(function (req, res, next) {
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log('Client IP:', ip);
+  next();
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -21,9 +40,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+app.use(session({secret: '<TODO-Secret-KEY>', resave:false, saveUninitialized:false}));
 
-app.use('/', routes);
-app.use('/users', users);
+app.use(function(req,res,next){
+    req.db = db;
+    req.AM = AM;
+    next();
+});
+
+app.use('/', routes_front);
+app.use('/app', routes_back);
+app.use('/user', AM.routes);
+
+AM.setup()
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

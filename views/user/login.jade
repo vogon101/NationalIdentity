@@ -1,0 +1,22 @@
+extends layout
+
+block links
+	link(rel='stylesheet', href='/stylesheets/forms.css')
+
+block content
+	h1 Login
+	if error
+		+alert("danger")=error
+	if success
+		+alert("success")=success
+	form#loginform( name="loginform", method="POST", action="/user/login" )
+		table
+			tr
+				td Username
+				td
+					input#username( type="text", name="username", value="" )
+			tr
+				td Password
+				td
+					input#password( type="password", name="password")
+		input#submit( type="submit", value="login")
